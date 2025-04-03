@@ -8,8 +8,10 @@ import { BASE_URL } from "../utils/constant";
 const Login = () => {
   const [emailId, setEmailId] = useState("sheswanthkuma@gmail.com");
   const [password, setPassword] = useState("Shes@123");
+  const [error, setError] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
   const handleLogin = async (event) => {
     event.preventDefault();
     try {
@@ -27,6 +29,7 @@ const Login = () => {
       // console.log(res.data);
     } catch (Err) {
       console.log(Err);
+      setError(Err.response.data);
     }
   };
 
@@ -80,6 +83,7 @@ const Login = () => {
               🔒
             </span>
           </div>
+          <p className="text-xl text-red-700">{error}</p>
           <button
             type="submit"
             onClick={handleLogin}
