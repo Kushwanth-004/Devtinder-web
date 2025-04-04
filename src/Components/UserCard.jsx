@@ -1,5 +1,4 @@
 import React from "react";
-import TinderCard from "react-tinder-card";
 
 const UserCard = ({ user }) => {
   const { firstName, lastName, photoUrl, skills, about } = user;

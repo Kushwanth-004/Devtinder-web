@@ -26,9 +26,8 @@ const Login = () => {
       dispatch(addUser(res.data));
       navigate("/");
 
-      // console.log(res.data);
     } catch (Err) {
-      console.log(Err);
+  
       setError(Err.response.data);
     }
   };
