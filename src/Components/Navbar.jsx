@@ -20,9 +20,7 @@ const Navbar = () => {
       );
       dispatch(removeUser());
       navigate("/login");
-    } catch (err) {
-      
-    }
+    } catch (err) {}
   };
 
   return (
@@ -70,8 +68,19 @@ const Navbar = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/connections" className="text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1">
+                <Link
+                  to="/connections"
+                  className="text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1"
+                >
                   Connections
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/Requests"
+                  className="text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1"
+                >
+                  Requests
                 </Link>
               </li>
               <li>
