@@ -17,6 +17,7 @@ const EditProfile = ({ user }) => {
   const dispatch = useDispatch();
 
   const handleUpdateProfile = async () => {
+    setError("");
     try {
       const res = await axios.patch(
         BASE_URL + "/profile/edit",
@@ -39,13 +40,14 @@ const EditProfile = ({ user }) => {
         setShowToast(false);
       }, 3000);
     } catch (err) {
-      setError(err.message);
+      console.log(err);
+      setError(err?.response.data);
     }
   };
 
   return (
     <div>
-      {!error && showToast && (
+      { showToast && (
         <div
           className="fixed top-4 right-4 bg-[rgba(255,82,141,0.9)] text-white px-6 py-3 rounded-xl 
           shadow-[0_4px_20px_rgba(255,82,141,0.6)] border border-[rgba(255,82,141,0.5)] z-30 

@@ -64,15 +64,15 @@ const Navbar = () => {
                   className="flex justify-between items-center text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1"
                 >
                   Profile
-                  <span className="badge bg-[rgba(255,42,109,0.8)] text-pink-800 border-none px-2 py-0.5 text-xs">
+                  {/* <span className="badge bg-[rgba(255,42,109,0.8)] text-pink-800 border-none px-2 py-0.5 text-xs">
                     New
-                  </span>
+                  </span> */}
                 </Link>
               </li>
               <li>
-                <a className="text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1">
-                  Settings
-                </a>
+                <Link to="/connections" className="text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1">
+                  Connections
+                </Link>
               </li>
               <li>
                 <button
