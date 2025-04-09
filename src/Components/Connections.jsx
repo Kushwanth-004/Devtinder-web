@@ -17,9 +17,23 @@ const Connections = () => {
     fetchConnections();
   }, []);
   if (!userConnections) return;
-  if (userConnections === 0) {
-    return <div>No Connections</div>;
+  if (userConnections.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/5674/5674803.png"
+          alt="No Connections"
+          className="w-24 h-24 mb-4 opacity-70"
+        />
+        <h2 className="text-2xl font-semibold mb-2">No Connections Yet</h2>
+        <p className="text-sm text-gray-500">
+          Looks like you haven't made any connections. Explore and connect with
+          others!
+        </p>
+      </div>
+    );
   }
+
   return (
     <>
       <div className="text-center my-10 text-4xl font-bold text-rose-600">

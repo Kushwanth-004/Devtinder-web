@@ -41,19 +41,19 @@ const EditProfile = ({ user }) => {
       }, 3000);
     } catch (err) {
       console.log(err);
-      setError(err?.response.data);
+      setError(err?.response?.data?.Error);
     }
   };
 
   return (
     <div>
-      { showToast && (
+      {showToast && (
         <div
           className="fixed top-4 right-4 bg-[rgba(255,82,141,0.9)] text-white px-6 py-3 rounded-xl 
           shadow-[0_4px_20px_rgba(255,82,141,0.6)] border border-[rgba(255,82,141,0.5)] z-30 
           toast-animation flex items-center gap-2"
         >
-          <span>✅ Data saved successfully!</span>
+          <span> Data saved successfully!</span>
         </div>
       )}
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-[#ffdce2] via-[#ffb6c1] to-[#ff758f] p-6">
@@ -67,9 +67,7 @@ const EditProfile = ({ user }) => {
 
           <div className="relative w-32 h-32 mx-auto mt-4 rounded-full border-4 border-white shadow-xl overflow-hidden">
             <img
-              src={
-                "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-              }
+              src={photoUrl}
               alt="Profile Preview"
               className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
             />
@@ -124,9 +122,9 @@ const EditProfile = ({ user }) => {
               className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d] bg-[#f5b5c0] focus:outline-none focus:ring-2 focus:ring-[#ff4f6d]/50"
             >
               <option value="">Select Gender</option>
-              <option value="Male">Male 🚹</option>
-              <option value="Female">Female 🚺</option>
-              <option value="Other">Other 🌈</option>
+              <option value="Male">Male </option>
+              <option value="Female">Female </option>
+              <option value="Other">Other </option>
             </select>
             <input
               type="text"
@@ -147,10 +145,7 @@ const EditProfile = ({ user }) => {
               placeholder="Tell us about yourself..."
               className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d] focus:outline-none focus:ring-2 focus:ring-[#ff4f6d]/50"
             />
-            {error && (
-              <p className="text-red-600 text-sm font-medium mt-2">{error}</p>
-            )}
-
+            <p className="text-red-600 text-sm font-medium mt-2">{error}</p>
             <button
               type="button"
               onClick={handleUpdateProfile}

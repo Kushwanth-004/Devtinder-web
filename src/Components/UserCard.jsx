@@ -1,7 +1,24 @@
+import axios from "axios";
 import React from "react";
+import { BASE_URL } from "../utils/constant";
+import { useDispatch, useSelector } from "react-redux";
+import { removeUserFromFeed } from "../utils/feedSlice";
 
 const UserCard = ({ user }) => {
-  const { firstName, lastName, photoUrl, skills, about } = user;
+  const dispatch = useDispatch();
+  const { firstName, lastName, photoUrl, skills, about, _id } = user;
+  const handleSendRequest = async (status, UserId) => {
+    try {
+      const res = await axios.post(
+        BASE_URL + "/request/send/" + status + "/" + UserId,
+        {},
+        { withCredentials: true }
+      );
+      dispatch(removeUserFromFeed(_id));
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br bg-white p-6">
@@ -45,16 +62,18 @@ const UserCard = ({ user }) => {
         {/* Action Buttons */}
         <div className="mt-8 flex gap-5 w-full justify-center">
           <button
+            onClick={() => handleSendRequest("interested", _id)}
             className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full 
               font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
           >
-            Like
+            Interested
           </button>
           <button
+            onClick={() => handleSendRequest("ignored", _id)}
             className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full 
               font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
           >
-            Pass
+            Ignore
           </button>
         </div>
       </div>

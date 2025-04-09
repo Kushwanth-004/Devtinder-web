@@ -47,7 +47,7 @@ const Navbar = () => {
               <div className="w-9 h-9 rounded-full border border-[rgba(255,42,109,0.5)] overflow-hidden">
                 <img
                   alt="User avatar"
-                  src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                  src={user.photoUrl}
                   className="object-cover w-full h-full transition-transform duration-300 group-hover:scale-105"
                 />
               </div>
@@ -65,6 +65,14 @@ const Navbar = () => {
                   {/* <span className="badge bg-[rgba(255,42,109,0.8)] text-pink-800 border-none px-2 py-0.5 text-xs">
                     New
                   </span> */}
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/"
+                  className="text-pink-800 hover:bg-[rgba(255,42,109,0.15)] hover:text-[#ff2a6d] transition-all duration-300 rounded-[6px] px-3 py-1"
+                >
+                  Feed
                 </Link>
               </li>
               <li>
