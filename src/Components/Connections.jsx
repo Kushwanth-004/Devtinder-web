@@ -1,19 +1,26 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionsSlice";
 import { Link } from "react-router-dom";
+import ConnectionLoader from "../loader/ConnectionLoader";
 
 const Connections = () => {
   const userConnections = useSelector((store) => store.Connection);
   const dispatch = useDispatch();
-
+  const [loader, setLoader] = useState(true);
   const fetchConnections = async () => {
-    const res = await axios.get(BASE_URL + "/user/connections", {
-      withCredentials: true,
-    });
-    dispatch(addConnections(res?.data?.data));
+    try {
+      const res = await axios.get(BASE_URL + "/user/connections", {
+        withCredentials: true,
+      });
+      dispatch(addConnections(res?.data?.data));
+    } catch (err) {
+      res.status(400).send(err.msg);
+    } finally {
+      setLoader(false);
+    }
   };
 
   useEffect(() => {
@@ -44,6 +51,7 @@ const Connections = () => {
       <div className="text-center my-10 text-4xl font-bold text-rose-600">
         ❤️ Connections
       </div>
+      {loader && <ConnectionLoader />}
 
       <div className="flex flex-wrap justify-center gap-8 px-4">
         {userConnections?.map((connection) => {

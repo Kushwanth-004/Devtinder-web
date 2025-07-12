@@ -4,13 +4,16 @@ import { BASE_URL } from "../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
 import UserCard from "./UserCard";
+import Loginloader from "../loader/Loginloader";
 
 const Feed = () => {
   const feed = useSelector((store) => store.feed);
   const dispatch = useDispatch();
+  const [loader, setLoader] = useState(false);
 
   const fetchFeed = async () => {
     try {
+      setLoader(true);
       if (feed && feed.length > 0) return;
       const res = await axios.get(BASE_URL + "/feed", {
         withCredentials: true,
@@ -18,6 +21,8 @@ const Feed = () => {
       dispatch(addFeed(res.data));
     } catch (err) {
       console.error("Feed fetch failed:", err);
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -27,9 +32,13 @@ const Feed = () => {
 
   const handleSendRequest = async (status, userId) => {
     try {
-      await axios.post(`${BASE_URL}/request/send/${status}/${userId}`, {}, {
-        withCredentials: true,
-      });
+      await axios.post(
+        `${BASE_URL}/request/send/${status}/${userId}`,
+        {},
+        {
+          withCredentials: true,
+        }
+      );
       dispatch(removeUserFromFeed(userId));
     } catch (err) {
       console.error("Send request failed:", err);
@@ -53,7 +62,9 @@ const Feed = () => {
           className="w-24 h-24 mb-4 opacity-70"
         />
         <h2 className="text-2xl font-semibold mb-2">No More Users Found</h2>
-        <p className="text-sm text-gray-500">Try again later or refresh the page.</p>
+        <p className="text-sm text-gray-500">
+          Try again later or refresh the page.
+        </p>
       </div>
     );
   }
@@ -61,6 +72,11 @@ const Feed = () => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#ffe4e9] via-[#ffced6] to-[#ffd2db] overflow-hidden">
       <div className="relative w-full max-w-md h-[600px]">
+        {loader && (
+          <div className="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center z-50">
+            <Loginloader />
+          </div>
+        )}
         {feed.map((user, index) => (
           <UserCard
             key={user._id}

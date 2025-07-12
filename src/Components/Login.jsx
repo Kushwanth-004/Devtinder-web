@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
 import { BASE_URL } from "../utils/constant";
+import Loginloader from "../loader/Loginloader";
 
 const Login = () => {
   const [emailId, setEmailId] = useState("");
@@ -14,9 +15,11 @@ const Login = () => {
   const [signUp, setSignUp] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loader, setLoader] = useState(false);
 
   const handleSignup = async () => {
     try {
+      setLoader(true);
       const res = await axios.post(
         BASE_URL + "/signup",
         { firstName, lastName, emailId, password },
@@ -25,12 +28,15 @@ const Login = () => {
       dispatch(addUser(res?.data?.data));
       return navigate("/profile");
     } catch (err) {
-      setError(err?.response?.data)
+      setError(err?.response?.data);
+    } finally {
+      setLoader(false);
     }
   };
 
   const handleLogin = async () => {
     try {
+      setLoader(true);
       const res = await axios.post(
         BASE_URL + "/login",
         { emailId, password },
@@ -40,6 +46,8 @@ const Login = () => {
       navigate("/");
     } catch (err) {
       setError(err?.response?.data || "Login failed");
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -49,6 +57,11 @@ const Login = () => {
         <h2 className="text-3xl font-bold text-center text-pink-600 mb-6 drop-shadow-sm">
           {signUp ? "Create Account" : "Welcome Back"}
         </h2>
+        {loader && (
+          <div className="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center z-50">
+            <Loginloader />
+          </div>
+        )}
 
         <form className="space-y-4">
           {signUp && (
@@ -58,14 +71,14 @@ const Login = () => {
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
                 placeholder="First Name"
-                className="input-style"
+                className="input-style text-gray-800"
               />
               <input
                 type="text"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
                 placeholder="Last Name"
-                className="input-style"
+                className="input-style text-gray-800"
               />
             </>
           )}
@@ -74,14 +87,14 @@ const Login = () => {
             value={emailId}
             onChange={(e) => setEmailId(e.target.value)}
             placeholder="Email"
-            className="input-style"
+            className="input-style text-gray-800"
           />
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Password"
-            className="input-style"
+            className="input-style text-gray-800"
           />
 
           {error && <p className="text-red-600 text-sm text-center">{error}</p>}
@@ -99,7 +112,6 @@ const Login = () => {
 
         <div className="mt-4 text-center">
           <button
-          
             onClick={() => setSignUp((prev) => !prev)}
             className="text-sm text-pink-600 hover:underline cursor-pointer"
           >
