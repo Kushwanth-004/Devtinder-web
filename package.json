@@ -1,8 +1,14 @@
 {
+
   "name": "package.json",
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "engines": {
+  "node": ">=18",
+  "bun": "0.0.0"
+},
+
   "scripts": {
     "start": "react-scripts start",
     "dev": "vite",
