@@ -37,14 +37,14 @@ const Chat = () => {
   const sendMessage = () => {
     if (!newMessage.trim()) return;
 
-    const messageData = {
-      text: newMessage,
-      sender: userid,
-      time: new Date(),
-      senderName: username,
-    };
+    // const messageData = {
+    //   text: newMessage,
+    //   sender: userid,
+    //   time: new Date(),
+    //   senderName: username,
+    // };
 
-    setMessages((prev) => [...prev, messageData]);
+    // setMessages((prev) => [...prev, messageData]);
 
     socketRef.current.emit("send_message", {
       newMessage,
