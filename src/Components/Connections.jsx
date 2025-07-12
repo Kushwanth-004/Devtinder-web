@@ -3,20 +3,25 @@ import React, { useEffect } from "react";
 import { BASE_URL } from "../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { addConnections } from "../utils/connectionsSlice";
+import { Link } from "react-router-dom";
 
 const Connections = () => {
   const userConnections = useSelector((store) => store.Connection);
   const dispatch = useDispatch();
+
   const fetchConnections = async () => {
     const res = await axios.get(BASE_URL + "/user/connections", {
       withCredentials: true,
     });
     dispatch(addConnections(res?.data?.data));
   };
+
   useEffect(() => {
     fetchConnections();
   }, []);
-  if (!userConnections) return;
+
+  if (!userConnections) return null;
+
   if (userConnections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600">
@@ -44,6 +49,7 @@ const Connections = () => {
         {userConnections?.map((connection) => {
           const { firstName, lastName, photoUrl, about, skills, _id } =
             connection;
+
           return (
             <div
               key={_id}
@@ -67,10 +73,17 @@ const Connections = () => {
                     <p className="text-xs text-rose-400 mb-1 font-semibold">
                       💡 Skills:
                     </p>
+                    <p className="text-sm text-gray-700">{skills}</p>
                   </div>
                 )}
 
                 <div className="mt-4 flex justify-between items-center">
+                  <Link
+                    to={"/chat/" + _id}
+                    className="bg-rose-500 text-white px-4 py-1 rounded-full hover:bg-rose-600 transition-all text-sm"
+                  >
+                    💬 Message
+                  </Link>
                   <span className="text-sm text-rose-400">
                     🌹 Romantic vibes
                   </span>

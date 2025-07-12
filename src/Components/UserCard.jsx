@@ -1,83 +1,63 @@
-import axios from "axios";
-import React from "react";
-import { BASE_URL } from "../utils/constant";
-import { useDispatch, useSelector } from "react-redux";
-import { removeUserFromFeed } from "../utils/feedSlice";
+import TinderCard from "react-tinder-card";
+import { FaTimes, FaHeart } from "react-icons/fa";
 
-const UserCard = ({ user }) => {
-  const dispatch = useDispatch();
-  const { firstName, lastName, photoUrl, skills, about, _id } = user;
-  const handleSendRequest = async (status, UserId) => {
-    try {
-      const res = await axios.post(
-        BASE_URL + "/request/send/" + status + "/" + UserId,
-        {},
-        { withCredentials: true }
-      );
-      dispatch(removeUserFromFeed(_id));
-    } catch (err) {
-      console.log(err);
-    }
+const UserCard = ({ user, onSwipeAction, index }) => {
+  const { firstName, lastName, age, photoUrl, _id } = user;
+
+  // ✅ Correct onSwipe usage
+  const handleSwipe = (direction) => {
+    onSwipeAction(direction, _id);
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br bg-white p-6">
+    <TinderCard
+      className="absolute flex justify-center items-center w-full h-full"
+      onSwipe={handleSwipe}
+      preventSwipe={["up", "down"]}
+      flickOnSwipe={true} // ✅ Important to allow actual swipe
+    >
       <div
-        className="relative bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl p-8 
-        w-[420px] max-w-full shadow-[0_8px_30px_rgba(255,114,141,0.3)] transition-all duration-500"
+        className="relative w-[330px] h-[500px] rounded-2xl bg-white border shadow-lg overflow-hidden flex flex-col justify-between"
+        style={{ zIndex: 100 - index }}
       >
         {/* Profile Image */}
-        <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl overflow-hidden">
-          <img
-            src={
-              photoUrl ||
-              "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
-            }
-            alt={`${firstName} ${lastName}'s Avatar`}
-            className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-          />
-        </div>
+        <img
+          src={
+            photoUrl ||
+            "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+          }
+          alt={`${firstName} ${lastName}`}
+          className="w-full h-full object-cover"
+        />
 
-        {/* User Details */}
-        <h3 className="mt-6 text-3xl font-semibold text-center text-[#ff4f6d] drop-shadow-sm">
-          {firstName} {lastName}
-        </h3>
-        <p className="text-sm text-gray-800 mt-2 text-center px-4 leading-relaxed font-light italic">
-          {about || "Hoping to find someone special 💕"}
-        </p>
+        {/* Gradient Overlay */}
+        <div className="absolute bottom-0 w-full h-[120px] bg-gradient-to-t from-black/70 to-transparent" />
 
-        {/* Skills/Interests Section */}
-        <div className="flex gap-2 mt-5 flex-wrap justify-center max-w-[90%]">
-          {skills.map((tech, index) => (
-            <span
-              key={index}
-              className="bg-white text-[#cd314b] px-4 py-1 rounded-full text-xs font-medium shadow-sm 
-              border border-[#ff4f6d]/40 transition-colors duration-300"
-            >
-              {tech}
-            </span>
-          ))}
+        {/* Name + Age */}
+        <div className="absolute bottom-16 left-4 text-white">
+          <h2 className="text-xl font-semibold">
+            {firstName} {lastName},{" "}
+            <span className="font-normal">{age || "NA"}</span>
+          </h2>
         </div>
 
         {/* Action Buttons */}
-        <div className="mt-8 flex gap-5 w-full justify-center">
+        <div className="absolute bottom-4 w-full flex justify-center gap-8">
           <button
-            onClick={() => handleSendRequest("interested", _id)}
-            className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full 
-              font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
+            className="bg-white border-2 border-pink-300 text-pink-600 rounded-full w-12 h-12 flex items-center justify-center shadow hover:scale-110 transition"
+            onClick={() => handleSwipe("left")}
           >
-            Interested
+            <FaTimes />
           </button>
           <button
-            onClick={() => handleSendRequest("ignored", _id)}
-            className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full 
-              font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
+            className="bg-white border-2 border-pink-300 text-green-500 rounded-full w-12 h-12 flex items-center justify-center shadow hover:scale-110 transition"
+            onClick={() => handleSwipe("right")}
           >
-            Ignore
+            <FaHeart />
           </button>
         </div>
       </div>
-    </div>
+    </TinderCard>
   );
 };
 

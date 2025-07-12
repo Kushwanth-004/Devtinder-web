@@ -1,0 +1,706 @@
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { createSocketConnection } from "../utils/socket";
+// import { useSelector } from "react-redux";
+
+// const Chat = () => {
+//   const [messages, setMessages] = useState([]);
+//   const [newMessage, setNewMessage] = useState("");
+//   const { targetUserId } = useParams();
+
+//   const user = useSelector((store) => store.user);
+//   const userid = user?._id;
+//   const username = user?.firstName;
+
+//   useEffect(() => {
+//     if (!userid || !targetUserId) return;
+//     const socket = createSocketConnection();
+//     socket.emit("joinChat", { userid, targetUserId, username });
+//     socket.on("message_received", ({ newMessage }) => {
+//       console.log(newMessage);
+//     });
+//     return () => {
+//       socket.disconnect();
+//     };
+//   }, [newMessage, userid, targetUserId]);
+
+//   const sendMessage = () => {
+//     setMessages((prev) => [...prev, newMessage]);
+//     const socket = createSocketConnection();
+//     socket.emit("send_message", { username, newMessage, userid, targetUserId });
+//     setNewMessage("");
+//   };
+
+//   return (
+//     <div className="flex flex-col h-screen bg-gradient-to-br from-pink-50 to-rose-100">
+//       {/* Header */}
+//       <div className="bg-rose-500 text-white text-center py-4 shadow-md text-2xl font-semibold">
+//         💬 Chat with Your Match
+//       </div>
+
+//       {/* Messages Area */}
+//       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
+//         {messages.map((msg, index) => (
+//           <div
+//             key={index}
+//             className="bg-pink-500 text-2xl text-white rounded-2xl w-auto"
+//           >
+//             {msg}
+//             <div className="px-5 py-3 rounded-3xl shadow-md max-w-[70%] text-sm"></div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Message Input */}
+//       <div className="p-4 bg-white border-t border-rose-100 flex items-center gap-3 sticky bottom-0">
+//         <input
+//           type="text"
+//           value={newMessage}
+//           onChange={(e) => setNewMessage(e.target.value)}
+//           placeholder="Type a sweet message..."
+//           className="flex-1 px-4 py-2 rounded-full border border-rose-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+//         />
+//         <button
+//           onClick={sendMessage}
+//           className="bg-rose-500 text-white px-5 py-2 rounded-full shadow hover:bg-rose-600 transition-all"
+//         >
+//           Send
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Chat;
+
+// import React, { useEffect, useState } from "react";
+// import { useParams } from "react-router-dom";
+// import { createSocketConnection } from "../utils/socket";
+// import { useSelector } from "react-redux";
+// import { BASE_URL } from "../utils/constant";
+// import axios from "axios"
+
+// const Chat = () => {
+//   const [messages, setMessages] = useState([]);
+//   const [newMessage, setNewMessage] = useState();
+//   const { targetUserId } = useParams();
+
+//   const user = useSelector((store) => store.user);
+//   const userid = user?._id;
+//   const username = user?.firstName;
+
+//   useEffect(() => {
+//     if (!userid || !targetUserId) return;
+
+//     const socket = createSocketConnection();
+
+//     socket.emit("joinChat", { userid, targetUserId, username });
+
+//     socket.on("message_received", (newMessage) => {
+//       console.log(newMessage);
+//       setMessages((prev) => [...prev, { text: newMessage, sender: "other" }]);
+//     });
+
+//     return () => {
+//       socket.disconnect();
+//     };
+//   }, [userid, targetUserId, newMessage]);
+
+//   const sendMessage = () => {
+//     if (!newMessage.trim()) return;
+
+//     setMessages((prev) => [...prev, { text: newMessage, sender: userid }]);
+
+//     const socket = createSocketConnection();
+//     socket.emit("send_message", { username, newMessage, userid, targetUserId });
+//     setNewMessage("");
+//   };
+
+//   const fetchChatMessage = async () => {
+//     const chat = await axios.get(BASE_URL + "/chat/" + targetUserId, {
+//       withCredentials: true,
+//     });
+//     const chatmessages = chat?.data?.messages.map((msg) => {
+//       const { senderId, text } = msg;
+//       return {
+//         firstName: senderId?.firstName,
+//         text,
+//       };
+//     });
+//     setMessages(chatmessages);
+//   };
+//   useEffect(() => {
+//     fetchChatMessage();
+//   }, []);
+//   return (
+//     <div className="flex flex-col h-screen bg-gradient-to-br from-pink-50 to-rose-100">
+//       {/* Header */}
+//       <div className="bg-rose-500 text-white text-center py-4 shadow-md text-2xl font-semibold">
+//         💬 Chat with Your Match
+//       </div>
+
+//       {/* Messages Area */}
+//       <div className="flex-1 overflow-y-auto px-4 py-6 space-y-3">
+//         {messages.map((msg, index) => (
+//           <div
+//             key={index}
+//             className={`flex ${
+//               msg.sender === userid ? "justify-end" : "justify-start"
+//             }`}
+//           >
+//             <div
+//               className={`px-5 py-3 rounded-3xl shadow-md max-w-[70%] text-sm ${
+//                 msg.sender === userid
+//                   ? "bg-rose-500 text-white rounded-br-none"
+//                   : "bg-white text-gray-800 rounded-bl-none"
+//               }`}
+//             >
+//               {msg.text}
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+
+//       {/* Message Input */}
+//       <div className="p-4 bg-white border-t border-rose-100 flex items-center gap-3 sticky bottom-0">
+//         <input
+//           type="text"
+//           value={newMessage}
+//           onChange={(e) => setNewMessage(e.target.value)}
+//           onKeyDown={(e) => {
+//             if (e.key === "Enter") {
+//               sendMessage();
+//             }
+//           }}
+//           placeholder="Type a sweet message..."
+//           className="flex-1 px-4 py-2 rounded-full border border-rose-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-300"
+//         />
+//         <button
+//           onClick={sendMessage}
+//           className="bg-rose-500 text-white px-5 py-2 rounded-full shadow hover:bg-rose-600 transition-all"
+//         >
+//           Send
+//         </button>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default Chat;
+
+import axios from "axios";
+import React from "react";
+import { BASE_URL } from "../utils/constant";
+import { useDispatch } from "react-redux";
+import { removeUserFromFeed } from "../utils/feedSlice";
+import TinderCard from "react-tinder-card";
+
+const UserCard = ({ user }) => {
+  const dispatch = useDispatch();
+  const { firstName, lastName, photoUrl, skills = [], about, _id } = user;
+
+  const handleSendRequest = async (status, userId) => {
+    try {
+      await axios.post(`${BASE_URL}/request/send/${status}/${userId}`, {}, {
+        withCredentials: true,
+      });
+      dispatch(removeUserFromFeed(userId));
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const onSwipe = (direction) => {
+    if (direction === "right") {
+      handleSendRequest("interested", _id);
+    } else if (direction === "left") {
+      handleSendRequest("ignored", _id);
+    }
+  };
+
+  const onCardLeftScreen = () => {
+    console.log(`${firstName} left the screen`);
+  };
+
+  return (
+    <div className="overflow-hidden">
+      <TinderCard
+        onSwipe={onSwipe}
+        onCardLeftScreen={onCardLeftScreen}
+        preventSwipe={["up", "down"]}
+      >
+        <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white to-pink-50 p-6">
+          <div
+            className="relative bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl p-8 
+            w-[420px] max-w-full shadow-[0_8px_30px_rgba(255,114,141,0.3)] transition-all duration-500"
+          >
+            {/* Profile Image */}
+            <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl overflow-hidden">
+              <img
+                src={
+                  photoUrl ||
+                  "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+                }
+                alt={`${firstName} ${lastName}'s Avatar`}
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+
+            {/* User Details */}
+            <h3 className="mt-6 text-3xl font-semibold text-center text-[#ff4f6d] drop-shadow-sm">
+              {firstName} {lastName}
+            </h3>
+            <p className="text-sm text-gray-800 mt-2 text-center px-4 leading-relaxed font-light italic">
+              {about || "Hoping to find someone special 💕"}
+            </p>
+
+            {/* Skills/Interests */}
+            <div className="flex gap-2 mt-5 flex-wrap justify-center max-w-[90%]">
+              {skills.map((tech, index) => (
+                <span
+                  key={index}
+                  className="bg-white text-[#cd314b] px-4 py-1 rounded-full text-xs font-medium shadow-sm 
+                  border border-[#ff4f6d]/40 transition-colors duration-300"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+
+            {/* Optional Buttons (if swipe doesn't work) */}
+            <div className="mt-8 flex gap-5 w-full justify-center">
+              <button
+                onClick={() => handleSendRequest("interested", _id)}
+                className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full 
+                  font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
+              >
+                Interested
+              </button>
+              <button
+                onClick={() => handleSendRequest("ignored", _id)}
+                className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full 
+                  font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
+              >
+                Ignore
+              </button>
+            </div>
+          </div>
+        </div>
+      </TinderCard>
+    </div>
+  );
+};
+
+export default UserCard;
+
+
+import axios from "axios";
+import React from "react";
+import { BASE_URL } from "../utils/constant";
+import { useDispatch } from "react-redux";
+import { removeUserFromFeed } from "../utils/feedSlice";
+import TinderCard from "react-tinder-card";
+
+// const UserCard = ({ user }) => {
+//   const dispatch = useDispatch();
+//   const { firstName, lastName, photoUrl, skills = [], about, _id } = user;
+
+//   const handleSendRequest = async (status, userId) => {
+//     try {
+//       await axios.post(`${BASE_URL}/request/send/${status}/${userId}`, {}, {
+//         withCredentials: true,
+//       });
+//       dispatch(removeUserFromFeed(userId));
+//     } catch (err) {
+//       console.error(err);
+//     }
+//   };
+
+//   const onSwipe = (direction) => {
+//     if (direction === "right") {
+//       handleSendRequest("interested", _id);
+//     } else if (direction === "left") {
+//       handleSendRequest("ignored", _id);
+//     }
+//   };
+
+//   const onCardLeftScreen = () => {
+//     console.log(`${firstName} left the screen`);
+//   };
+
+//   return (
+//     <div className="overflow-hidden">
+//       <TinderCard
+//         onSwipe={onSwipe}
+//         onCardLeftScreen={onCardLeftScreen}
+//         preventSwipe={["up", "down"]}
+//       >
+//         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-white to-pink-50 p-6">
+//           <div
+//             className="relative bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl p-8
+//             w-[420px] max-w-full shadow-[0_8px_30px_rgba(255,114,141,0.3)] transition-all duration-500"
+//           >
+//             {/* Profile Image */}
+//             <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl overflow-hidden">
+//               <img
+//                 src={
+//                   photoUrl ||
+//                   "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+//                 }
+//                 alt={`${firstName} ${lastName}'s Avatar`}
+//                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+//               />
+//             </div>
+
+//             {/* User Details */}
+//             <h3 className="mt-6 text-3xl font-semibold text-center text-[#ff4f6d] drop-shadow-sm">
+//               {firstName} {lastName}
+//             </h3>
+//             <p className="text-sm text-gray-800 mt-2 text-center px-4 leading-relaxed font-light italic">
+//               {about || "Hoping to find someone special 💕"}
+//             </p>
+
+//             {/* Skills/Interests */}
+//             <div className="flex gap-2 mt-5 flex-wrap justify-center max-w-[90%]">
+//               {skills.map((tech, index) => (
+//                 <span
+//                   key={index}
+//                   className="bg-white text-[#cd314b] px-4 py-1 rounded-full text-xs font-medium shadow-sm
+//                   border border-[#ff4f6d]/40 transition-colors duration-300"
+//                 >
+//                   {tech}
+//                 </span>
+//               ))}
+//             </div>
+
+//             {/* Optional Buttons (if swipe doesn't work) */}
+//             <div className="mt-8 flex gap-5 w-full justify-center">
+//               <button
+//                 onClick={() => handleSendRequest("interested", _id)}
+//                 className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full
+//                   font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
+//               >
+//                 Interested
+//               </button>
+//               <button
+//                 onClick={() => handleSendRequest("ignored", _id)}
+//                 className="bg-transparent border-2 border-[#ff4f6d] text-[#ff4f6d] px-7 py-2 rounded-full
+//                   font-medium text-lg hover:bg-[#ff4f6d] hover:text-white transition-all duration-300"
+//               >
+//                 Ignore
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+//       </TinderCard>
+//     </div>
+//   );
+// };
+
+// export default UserCard;
+
+// try
+
+// const UserCard = ({ user, onSwipeAction }) => {
+//   const { firstName, lastName, photoUrl, skills, about } = user;
+
+//   return (
+//     <div className="overflow-hidden">
+//       <TinderCard
+//         onSwipe={(dir) => onSwipeAction(dir, user._id)}
+//         preventSwipe={["up", "down"]}
+//       >
+//         <div className="flex items-center justify-center min-h-screen bg-gradient-to-br bg-white p-6">
+//           <div
+//             className="relative bg-white/20 backdrop-blur-2xl border border-white/30 rounded-2xl p-8
+//             w-[420px] max-w-full shadow-[0_8px_30px_rgba(255,114,141,0.3)] transition-all duration-500"
+//           >
+//             <div className="w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl overflow-hidden">
+//               <img
+//                 src={
+//                   photoUrl ||
+//                   "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+//                 }
+//                 alt={`${firstName} ${lastName}`}
+//                 className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+//               />
+//             </div>
+
+//             <h3 className="mt-6 text-3xl font-semibold text-center text-[#ff4f6d] drop-shadow-sm">
+//               {firstName} {lastName}
+//             </h3>
+//             <p className="text-sm text-gray-800 mt-2 text-center px-4 leading-relaxed font-light italic">
+//               {about || "Hoping to find someone special 💕"}
+//             </p>
+
+//             <div className="flex gap-2 mt-5 flex-wrap justify-center max-w-[90%]">
+//               {(skills || []).map((tech, index) => (
+//                 <span
+//                   key={index}
+//                   className="bg-white text-[#cd314b] px-4 py-1 rounded-full text-xs font-medium shadow-sm
+//               border border-[#ff4f6d]/40 transition-colors duration-300"
+//                 >
+//                   {tech}
+//                 </span>
+//               ))}
+//             </div>
+//           </div>
+//         </div>
+//       </TinderCard>
+//     </div>
+//   );
+// };
+
+// export default UserCard;
+
+// import axios from "axios";
+// import React from "react";
+// import TinderCard from "react-tinder-card";
+
+// const UserCard = ({ user, onSwipeAction, index }) => {
+//   const { firstName, lastName, photoUrl, skills = [], about, _id } = user;
+
+//   const handleSwipe = (direction) => {
+//     onSwipeAction(direction, _id);
+//   };
+
+//   return (
+//     <TinderCard
+//       className="absolute w-full h-full"
+//       onSwipe={handleSwipe}
+//       preventSwipe={["up", "down"]}
+//     >
+//       <div
+//         className="bg-white/80 backdrop-blur-lg rounded-3xl shadow-xl border border-pink-200 p-6
+//         w-full h-full flex flex-col justify-between transition-transform duration-300 hover:scale-[1.01]"
+//         style={{ zIndex: 100 - index }}
+//       >
+//         <div className="flex flex-col items-center">
+//           <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg">
+//             <img
+//               src={
+//                 photoUrl ||
+//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+//               }
+//               alt="Profile"
+//               className="w-full h-full object-cover"
+//             />
+//           </div>
+//           <h2 className="mt-4 text-3xl font-bold text-pink-600 text-center">
+//             {firstName} {lastName}
+//           </h2>
+//           <p className="mt-2 text-sm text-gray-600 text-center px-4 italic">
+//             {about || "Looking to connect and vibe! 💫"}
+//           </p>
+//         </div>
+
+//         <div className="flex flex-wrap gap-2 justify-center mt-4">
+//           {skills.map((skill, i) => (
+//             <span
+//               key={i}
+//               className="bg-pink-100 text-pink-600 px-3 py-1 rounded-full text-xs font-medium shadow"
+//             >
+//               {skill}
+//             </span>
+//           ))}
+//         </div>
+
+//         <div className="mt-6 text-center text-xs text-gray-400 italic">
+//           Swipe ➡ for Interested | ⬅ for Ignore
+//         </div>
+//       </div>
+//     </TinderCard>
+//   );
+// };
+
+// import React from "react";
+// import TinderCard from "react-tinder-card";
+
+// const UserCard = ({ user, onSwipeAction, index }) => {
+//   const { firstName, lastName, photoUrl, skills = [], about, _id } = user;
+
+//   const handleSwipe = (direction) => {
+//     onSwipeAction(direction, _id);
+//   };
+
+//   return (
+//     <TinderCard
+//       className="absolute w-full h-full flex justify-center items-center"
+//       onSwipe={handleSwipe}
+//       preventSwipe={["up", "down"]}
+//     >
+//       <div
+//         className="relative w-[320px] h-[480px] bg-gradient-to-br from-white to-pink-100 border border-pink-300
+//         rounded-3xl shadow-[0_8px_20px_rgba(255,105,135,0.3)] p-5 flex flex-col justify-between
+//         backdrop-blur-xl"
+//         style={{ zIndex: 100 - index }}
+//       >
+//         {/* Image */}
+//         <div className="flex flex-col items-center">
+//           <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3">
+//             <img
+//               src={
+//                 photoUrl ||
+//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+//               }
+//               alt={`${firstName} ${lastName}`}
+//               className="w-full h-full object-cover"
+//             />
+//           </div>
+//           <h2 className="text-xl font-bold text-pink-600">{firstName} {lastName}</h2>
+//           <p className="text-sm text-gray-600 mt-1 text-center px-4 italic">
+//             {about || "Looking to connect and vibe! 💫"}
+//           </p>
+//         </div>
+
+//         {/* Skills */}
+//         <div className="flex flex-wrap justify-center gap-2 mt-4">
+//           {skills.map((skill, i) => (
+//             <span
+//               key={i}
+//               className="bg-white text-pink-600 border border-pink-300 rounded-full px-3 py-1 text-xs font-medium shadow-sm"
+//             >
+//               {skill}
+//             </span>
+//           ))}
+//         </div>
+
+//         {/* Swipe Note */}
+//         <div className="text-center text-xs text-gray-400 italic mt-5">
+//           Swipe ➡ for Interested | ⬅ for Ignore
+//         </div>
+//       </div>
+//     </TinderCard>
+//   );
+// };
+
+// export default UserCard;
+
+// import React from "react";
+// import TinderCard from "react-tinder-card";
+
+// const UserCard = ({ user, onSwipeAction, index }) => {
+//   const { firstName, lastName, photoUrl, skills = [], about, _id } = user;
+
+//   const handleSwipe = (direction) => {
+//     onSwipeAction(direction, _id);
+//   };
+
+//   return (
+//     <TinderCard
+//       className="absolute w-full h-full flex justify-center items-center"
+//       onSwipe={handleSwipe}
+//       preventSwipe={["up", "down"]}
+//     >
+//       <div
+//         className="relative w-[340px] h-[500px] bg-gradient-to-br from-pink-100 via-pink-200 to-pink-300
+//         rounded-3xl p-6 border-2 border-white/40 shadow-2xl sparkle-card"
+//         style={{ zIndex: 100 - index }}
+//       >
+//         {/* Sparkle overlay */}
+//         <div className="absolute inset-0 rounded-3xl pointer-events-none sparkle-overlay z-0" />
+
+//         {/* Image */}
+//         <div className="z-10 flex flex-col items-center">
+//           <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mb-4">
+//             <img
+//               src={
+//                 photoUrl ||
+//                 "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+//               }
+//               alt={`${firstName} ${lastName}`}
+//               className="w-full h-full object-cover"
+//             />
+//           </div>
+//           <h2 className="text-2xl font-bold text-pink-700">{firstName} {lastName}</h2>
+//           <p className="text-sm text-gray-800 mt-1 text-center px-4 italic">
+//             {about || "Looking to vibe and connect 💕"}
+//           </p>
+//         </div>
+
+//         {/* Skills */}
+//         <div className="flex flex-wrap justify-center gap-2 mt-5 z-10">
+//           {skills.map((skill, i) => (
+//             <span
+//               key={i}
+//               className="bg-white/80 text-pink-600 border border-pink-400 rounded-full px-3 py-1 text-xs font-medium shadow-sm backdrop-blur-md"
+//             >
+//               {skill}
+//             </span>
+//           ))}
+//         </div>
+
+//         {/* Footer Note */}
+//         <div className="text-center text-xs text-gray-500 italic mt-6 z-10">
+//           Swipe ➡ for Interested | ⬅ for Ignore
+//         </div>
+//       </div>
+//     </TinderCard>
+//   );
+// };
+
+// export default UserCard;
+
+// // import React from "react";
+// import TinderCard from "react-tinder-card";
+// import { FaTimes, FaHeart } from "react-icons/fa";
+
+// const UserCard = ({ user, onSwipeAction, index }) => {
+//   const { firstName, lastName, age, photoUrl, _id } = user;
+
+//   const handleSwipe = (direction) => {
+//     onSwipeAction(direction, _id);
+//   };
+
+//   return (
+//     <div className="absolute w-full h-full flex justify-center items-center">
+//       <TinderCard onSwipe={handleSwipe} preventSwipe={["up", "down"]}>
+//         <div
+//           className="relative w-[330px] h-[500px] rounded-2xl bg-white border shadow-lg overflow-hidden flex flex-col justify-between"
+//           style={{ zIndex: 100 - index }}
+//         >
+//           {/* Profile Image */}
+//           <img
+//             src={
+//               photoUrl ||
+//               "https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp"
+//             }
+//             alt={`${firstName} ${lastName}`}
+//             className="w-full h-full object-cover"
+//           />
+
+//           {/* Gradient Overlay */}
+//           <div className="absolute bottom-0 w-full h-[120px] bg-gradient-to-t from-black/70 to-transparent" />
+
+//           {/* Name + Age */}
+//           <div className="absolute bottom-16 left-4 text-white">
+//             <h2 className="text-xl font-semibold">
+//               {firstName} {lastName},{" "}
+//               <span className="font-normal">{age || "NA"}</span>
+//             </h2>
+//           </div>
+
+//           {/* Action Buttons */}
+//           <div className="absolute bottom-4 w-full flex justify-center gap-8">
+//             <button
+//               className="bg-white border-2 border-pink-300 text-pink-600 rounded-full w-12 h-12 flex items-center justify-center shadow hover:scale-110 transition"
+//               onClick={() => handleSwipe("left")}
+//             >
+//               <FaTimes />
+//             </button>
+//             <button
+//               className="bg-white border-2 border-pink-300 text-green-500 rounded-full w-12 h-12 flex items-center justify-center shadow hover:scale-110 transition"
+//               onClick={() => handleSwipe("right")}
+//             >
+//               <FaHeart />
+//             </button>
+//           </div>
+//         </div>
+//       </TinderCard>
+//     </div>
+//   );
+// };
+
+// export default UserCard;
+
+

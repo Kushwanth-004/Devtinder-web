@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { BASE_URL } from "../utils/constant";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const EditProfile = ({ user }) => {
   const [firstName, setFirstName] = useState(user?.firstName || "");
@@ -15,12 +16,12 @@ const EditProfile = ({ user }) => {
   const [showToast, setShowToast] = useState(false);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
   const handleUpdateProfile = async () => {
     setError("");
     try {
       const res = await axios.patch(
-        BASE_URL + "/profile/edit",
+        BASE_URL + "/profile/update",
         {
           firstName,
           lastName,
@@ -38,6 +39,7 @@ const EditProfile = ({ user }) => {
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
+        navigate("/feed");
       }, 3000);
     } catch (err) {
       console.log(err);
