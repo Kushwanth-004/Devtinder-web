@@ -12,9 +12,9 @@ const Feed = () => {
   const [loader, setLoader] = useState(false);
 
   const fetchFeed = async () => {
+    if (feed && feed.length > 0) return;
+    setLoader(true);
     try {
-      setLoader(true);
-      if (feed && feed.length > 0) return;
       const res = await axios.get(BASE_URL + "/feed", {
         withCredentials: true,
       });
@@ -53,7 +53,7 @@ const Feed = () => {
     }
   };
 
-  if (!feed || feed.length === 0) {
+  if (!feed || (feed.length === 0 && !loader)) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600 min-h-screen bg-gradient-to-b from-[#fff0f3] to-[#ffdce2]">
         <img
@@ -71,21 +71,22 @@ const Feed = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#ffe4e9] via-[#ffced6] to-[#ffd2db] overflow-hidden">
-      <div className="relative w-full max-w-md h-[600px]">
-        {loader && (
-          <div className="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center z-50">
-            <Loginloader />
-          </div>
-        )}
-        {feed.map((user, index) => (
-          <UserCard
-            key={user._id}
-            user={user}
-            onSwipeAction={handleSwipeAction}
-            index={index}
-          />
-        ))}
-      </div>
+      {loader ? (
+        <div className="fixed inset-0 bg-white bg-opacity-60 flex items-center justify-center z-50">
+          <Loginloader />
+        </div>
+      ) : (
+        <div className="relative w-full max-w-md h-[600px]">
+          {feed.map((user, index) => (
+            <UserCard
+              key={user._id}
+              user={user}
+              onSwipeAction={handleSwipeAction}
+              index={index}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
