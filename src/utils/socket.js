@@ -7,7 +7,7 @@ export const createSocketConnection = () => {
   } else {
     // return io("/", { path: "/api/socket.io" });
     return io("https://your-backend.onrender.com", {
-      path: "/socket.io", // or "/api/socket.io" if you've set it
+      // or "/api/socket.io" if you've set it
       transports: ["websocket"],
       withCredentials: true,
     });
