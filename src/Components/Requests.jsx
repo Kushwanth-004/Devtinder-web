@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import { BASE_URL } from "../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { addRequest, removeRequest } from "../utils/requestsSlice";
+import ConnectionLoader from "../loader/ConnectionLoader";
 
 const Requests = () => {
   const requests = useSelector((store) => store.request);
   const dispatch = useDispatch();
+  const [loader, setLoader] = useState(true);
   const handleStatusButton = async (status, req_id) => {
     try {
       const res = await axios.post(
@@ -33,6 +35,8 @@ const Requests = () => {
       dispatch(addRequest(dataRecieved));
     } catch (err) {
       console.log(err);
+    } finally {
+      setLoader(false);
     }
   };
   useEffect(() => {
@@ -62,6 +66,7 @@ const Requests = () => {
         <h1 className="text-4xl font-bold text-center text-pink-600 mb-10">
           💌 Requests Received
         </h1>
+        {loader && <ConnectionLoader />}
         <div className="flex flex-wrap justify-center gap-6">
           {requests?.map((req, index) => {
             const { _id, firstName, lastName, about, photoUrl, skills } =
