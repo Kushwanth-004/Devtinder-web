@@ -29,7 +29,7 @@ const Connections = () => {
 
   if (!userConnections) return null;
 
-  if (userConnections.length === 0) {
+  if (!loader && userConnections.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center text-gray-600">
         <img
@@ -51,56 +51,60 @@ const Connections = () => {
       <div className="text-center my-10 text-4xl font-bold text-rose-600">
         ❤️ Connections
       </div>
-      {loader && <ConnectionLoader />}
+      {loader ? (
+        <ConnectionLoader />
+      ) : (
+        <div className="flex flex-wrap justify-center gap-8 px-4">
+          {userConnections?.map((connection) => {
+            const { firstName, lastName, photoUrl, about, skills, _id } =
+              connection;
 
-      <div className="flex flex-wrap justify-center gap-8 px-4">
-        {userConnections?.map((connection) => {
-          const { firstName, lastName, photoUrl, about, skills, _id } =
-            connection;
+            return (
+              <div
+                key={_id}
+                className="w-80 bg-gradient-to-br from-pink-100 via-rose-100 to-pink-200 rounded-3xl shadow-lg overflow-hidden border border-pink-300 hover:shadow-xl transition-all duration-300"
+              >
+                <img
+                  src={photoUrl}
+                  alt={`${firstName} ${lastName}`}
+                  className="w-full h-60 object-cover"
+                />
 
-          return (
-            <div
-              key={_id}
-              className="w-80 bg-gradient-to-br from-pink-100 via-rose-100 to-pink-200 rounded-3xl shadow-lg overflow-hidden border border-pink-300 hover:shadow-xl transition-all duration-300"
-            >
-              <img
-                src={photoUrl}
-                alt={`${firstName} ${lastName}`}
-                className="w-full h-60 object-cover"
-              />
+                <div className="p-5 text-rose-700">
+                  <h2 className="text-2xl font-bold mb-1">
+                    {firstName} {lastName}
+                  </h2>
 
-              <div className="p-5 text-rose-700">
-                <h2 className="text-2xl font-bold mb-1">
-                  {firstName} {lastName}
-                </h2>
+                  {about && (
+                    <p className="text-sm mb-3 text-rose-500">{about}</p>
+                  )}
 
-                {about && <p className="text-sm mb-3 text-rose-500">{about}</p>}
+                  {skills && (
+                    <div className="mb-3">
+                      <p className="text-xs text-rose-400 mb-1 font-semibold">
+                        💡 Skills:
+                      </p>
+                      <p className="text-sm text-gray-700">{skills}</p>
+                    </div>
+                  )}
 
-                {skills && (
-                  <div className="mb-3">
-                    <p className="text-xs text-rose-400 mb-1 font-semibold">
-                      💡 Skills:
-                    </p>
-                    <p className="text-sm text-gray-700">{skills}</p>
+                  <div className="mt-4 flex justify-between items-center">
+                    <Link
+                      to={"/chat/" + _id}
+                      className="bg-rose-500 text-white px-4 py-1 rounded-full hover:bg-rose-600 transition-all text-sm"
+                    >
+                      💬 Message
+                    </Link>
+                    <span className="text-sm text-rose-400">
+                      🌹 Romantic vibes
+                    </span>
                   </div>
-                )}
-
-                <div className="mt-4 flex justify-between items-center">
-                  <Link
-                    to={"/chat/" + _id}
-                    className="bg-rose-500 text-white px-4 py-1 rounded-full hover:bg-rose-600 transition-all text-sm"
-                  >
-                    💬 Message
-                  </Link>
-                  <span className="text-sm text-rose-400">
-                    🌹 Romantic vibes
-                  </span>
                 </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 };
