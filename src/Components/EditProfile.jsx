@@ -54,7 +54,7 @@ const EditProfile = ({ user }) => {
       setShowToast(true);
       setTimeout(() => {
         setShowToast(false);
-        navigate("/feed");
+        navigate("/");
       }, 2000);
     } catch (err) {
       console.error(err);
