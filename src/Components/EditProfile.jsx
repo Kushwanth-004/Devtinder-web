@@ -39,7 +39,7 @@ const EditProfile = ({ user }) => {
         formData.append("photo", file);
       }
 
-      const updateRes = await axios.patch(
+      const updateRes = await axios.post(
         `${BASE_URL}/profile/update`,
         formData,
         {
