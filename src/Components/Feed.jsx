@@ -8,6 +8,8 @@ import Loginloader from "../loader/Loginloader";
 
 const Feed = () => {
   const feed = useSelector((store) => store.feed);
+  const user = useSelector((state) => state.user);
+
   const dispatch = useDispatch();
   const [loader, setLoader] = useState(false);
 
@@ -28,7 +30,7 @@ const Feed = () => {
 
   useEffect(() => {
     fetchFeed();
-  }, []);
+  }, [user]);
 
   const handleSendRequest = async (status, userId) => {
     try {

@@ -43,10 +43,10 @@ const EditProfile = ({ user }) => {
         `${BASE_URL}/profile/update`,
         formData,
         {
-          withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
           },
+          withCredentials: true,
         }
       );
 
@@ -55,7 +55,7 @@ const EditProfile = ({ user }) => {
       setTimeout(() => {
         setShowToast(false);
         navigate("/feed");
-      }, 3000);
+      }, 2000);
     } catch (err) {
       console.error(err);
       setError(err?.response?.data?.Error || "Update failed.");
