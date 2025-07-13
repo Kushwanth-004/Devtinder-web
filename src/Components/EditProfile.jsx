@@ -22,91 +22,47 @@ const EditProfile = ({ user }) => {
   const [error, setError] = useState("");
   const [loader, setLoader] = useState(false);
 
-  // const handleUpdateProfile = async () => {
-  //   setError("");
-  //   setLoader(true);
-  //   try {
-  //     let uploadedImageUrl = photoUrl;
-
-  //     if (file) {
-  //       const formData = new FormData();
-  //       formData.append("photo", file);
-
-  //       const uploadRes = await axios.put(`${BASE_URL}/profile/photo`, formData, {
-  //         withCredentials: true,
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       });
-
-  //       uploadedImageUrl = uploadRes.data.imageUrl;
-  //       setPhotoUrl(uploadedImageUrl);
-  //     }
-
-  //     const updateRes = await axios.patch(
-  //       `${BASE_URL}/profile/update`,
-  //       {
-  //         firstName,
-  //         lastName,
-  //         photoUrl: uploadedImageUrl,
-  //         about,
-  //         skills,
-  //         gender,
-  //         age,
-  //       },
-  //       {
-  //         withCredentials: true,
-  //       }
-  //     );
-
-  //     dispatch(addUser(updateRes?.data?.data));
-  //     setShowToast(true);
-  //     setTimeout(() => {
-  //       setShowToast(false);
-  //       navigate("/feed");
-  //     }, 3000);
-  //   } catch (err) {
-  //     console.error(err);
-  //     setError(err?.response?.data?.Error || "Update failed.");
-  //   } finally {
-  //     setLoader(false);
-  //   }
-  // };
+  //
   const handleUpdateProfile = async () => {
-  setError("");
-  setLoader(true);
-  try {
-    const formData = new FormData();
-    formData.append("firstName", firstName);
-    formData.append("lastName", lastName);
-    formData.append("about", about);
-    formData.append("skills", skills);
-    formData.append("gender", gender);
-    formData.append("age", age);
+    setError("");
+    setLoader(true);
+    try {
+      const formData = new FormData();
+      formData.append("firstName", firstName);
+      formData.append("lastName", lastName);
+      formData.append("about", about);
+      formData.append("skills", skills);
+      formData.append("gender", gender);
+      formData.append("age", age);
 
-    if (file) {
-      formData.append("photo", file);
+      if (file) {
+        formData.append("photo", file);
+      }
+
+      const updateRes = await axios.patch(
+        `${BASE_URL}/profile/update`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      dispatch(addUser(updateRes?.data?.data));
+      setShowToast(true);
+      setTimeout(() => {
+        setShowToast(false);
+        navigate("/feed");
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setError(err?.response?.data?.Error || "Update failed.");
+    } finally {
+      setLoader(false);
     }
-
-    const updateRes = await axios.patch(`${BASE_URL}/profile/update`, formData, {
-      withCredentials: true,
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-
-    dispatch(addUser(updateRes?.data?.data));
-    setShowToast(true);
-    setTimeout(() => {
-      setShowToast(false);
-      navigate("/feed");
-    }, 3000);
-  } catch (err) {
-    console.error(err);
-    setError(err?.response?.data?.Error || "Update failed.");
-  } finally {
-    setLoader(false);
-  }
-};
-
+  };
 
   return (
     <div>
@@ -186,7 +142,9 @@ const EditProfile = ({ user }) => {
                   className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
                 />
                 {error && (
-                  <p className="text-red-600 text-sm font-medium mt-2">{error}</p>
+                  <p className="text-red-600 text-sm font-medium mt-2">
+                    {error}
+                  </p>
                 )}
                 <button
                   type="button"
