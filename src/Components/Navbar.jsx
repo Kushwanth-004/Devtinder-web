@@ -26,11 +26,13 @@ const Navbar = () => {
   return (
     <div className="navbar bg-[linear-gradient(to_right,#0d0018,#3d0822,#ff2a6d)] shadow-[0_2px_12px_rgba(255,42,109,0.3)] px-6 py-3">
       <div className="flex-1">
-        <a className="text-[1.75rem] font-bold text-white tracking-tight hover:text-[#ff2a6d] transition-colors duration-300">
-          <span className="inline-flex items-center">
-            DevTinder
-            <span className="ml-1 text-[1rem]">💞</span>
-          </span>
+        <a className="text-[1.75rem] font-bold text-[#ff2a6d] tracking-tight hover:text-[#ff2a6d] transition-colors duration-300">
+     <span className="inline-flex items-center">
+  Twinklr
+  <span className="ml-2 text-sm italic text-gray-600">find your spark ✨</span>
+</span>
+
+
         </a>
       </div>
       {user && (

@@ -4,6 +4,7 @@ import { BASE_URL } from "../utils/constant";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
 import { useNavigate } from "react-router-dom";
+import ProfileLoader from "../loader/ProfileLoader";
 
 const EditProfile = ({ user }) => {
   const dispatch = useDispatch();
@@ -19,9 +20,11 @@ const EditProfile = ({ user }) => {
   const [file, setFile] = useState(null);
   const [showToast, setShowToast] = useState(false);
   const [error, setError] = useState("");
+  const [loader, setLoader] = useState(false);
 
   const handleUpdateProfile = async () => {
     setError("");
+    setLoader(true);
     try {
       let uploadedImageUrl = photoUrl;
 
@@ -56,7 +59,6 @@ const EditProfile = ({ user }) => {
 
       dispatch(addUser(updateRes?.data?.data));
       setShowToast(true);
-
       setTimeout(() => {
         setShowToast(false);
         navigate("/feed");
@@ -64,6 +66,8 @@ const EditProfile = ({ user }) => {
     } catch (err) {
       console.error(err);
       setError(err?.response?.data?.Error || "Update failed.");
+    } finally {
+      setLoader(false);
     }
   };
 
@@ -71,7 +75,7 @@ const EditProfile = ({ user }) => {
     <div>
       {showToast && (
         <div className="fixed bottom-4 right-4 bg-[rgba(255,82,141,0.9)] text-white px-6 py-3 rounded-xl shadow-[0_4px_20px_rgba(255,82,141,0.6)] border border-[rgba(255,82,141,0.5)] z-30 toast-animation flex items-center gap-2">
-          <span>✅ Profile updated successfully!</span>
+          <span>Profile updated successfully!</span>
         </div>
       )}
 
@@ -81,78 +85,82 @@ const EditProfile = ({ user }) => {
             Update Profile
           </h2>
 
-          <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl overflow-hidden mb-4">
-            <img
-              src={photoUrl}
-              alt="Profile Preview"
-              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-            />
-          </div>
+          {loader ? (
+            <ProfileLoader />
+          ) : (
+            <>
+              <div className="relative w-32 h-32 mx-auto rounded-full border-4 border-white shadow-xl overflow-hidden mb-4">
+                <img
+                  src={photoUrl}
+                  alt="Profile Preview"
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+                />
+              </div>
 
-          <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
-            <input
-              type="text"
-              placeholder="First Name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d] focus:ring-2 focus:ring-[#ff4f6d]/50"
-            />
-            <input
-              type="text"
-              placeholder="Last Name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
-            />
-            <input
-              type="number"
-              placeholder="Age"
-              value={age}
-              onChange={(e) => setAge(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
-            />
-            <input
-              type="file"
-              accept="image/*"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
-            />
-            <select
-              value={gender}
-              onChange={(e) => setGender(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d] bg-[#f5b5c0]"
-            >
-              <option value="">Select Gender</option>
-              <option value="Male">Male </option>
-              <option value="Female">Female </option>
-              <option value="Other">Other </option>
-            </select>
-            <input
-              type="text"
-              placeholder="Skills (comma separated)"
-              value={skills}
-              onChange={(e) => setSkills(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
-            />
-            <textarea
-              placeholder="Tell us about yourself..."
-              value={about}
-              onChange={(e) => setAbout(e.target.value)}
-              className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
-            />
-
-            {error && (
-              <p className="text-red-600 text-sm font-medium mt-2">{error}</p>
-            )}
-
-            <button
-              type="button"
-              onClick={handleUpdateProfile}
-              className="w-full bg-[#ff4f6d] text-white px-6 py-2 rounded-lg font-medium text-lg shadow-md hover:bg-[#e63759] transition-all"
-            >
-              Update Profile
-            </button>
-          </form>
+              <form className="space-y-4" onSubmit={(e) => e.preventDefault()}>
+                <input
+                  type="text"
+                  placeholder="First Name"
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d] focus:ring-2 focus:ring-[#ff4f6d]/50"
+                />
+                <input
+                  type="text"
+                  placeholder="Last Name"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
+                />
+                <input
+                  type="number"
+                  placeholder="Age"
+                  value={age}
+                  onChange={(e) => setAge(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
+                />
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
+                />
+                <select
+                  value={gender}
+                  onChange={(e) => setGender(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d] bg-[#f5b5c0]"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+                <input
+                  type="text"
+                  placeholder="Skills (comma separated)"
+                  value={skills}
+                  onChange={(e) => setSkills(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
+                />
+                <textarea
+                  placeholder="Tell us about yourself..."
+                  value={about}
+                  onChange={(e) => setAbout(e.target.value)}
+                  className="w-full px-4 py-2 rounded-lg border border-[#ff4f6d]"
+                />
+                {error && (
+                  <p className="text-red-600 text-sm font-medium mt-2">{error}</p>
+                )}
+                <button
+                  type="button"
+                  onClick={handleUpdateProfile}
+                  className="w-full bg-[#ff4f6d] text-white px-6 py-2 rounded-lg font-medium text-lg shadow-md hover:bg-[#e63759] transition-all"
+                >
+                  Update Profile
+                </button>
+              </form>
+            </>
+          )}
         </div>
       </div>
     </div>
